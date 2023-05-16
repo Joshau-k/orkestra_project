@@ -13,5 +13,5 @@ class AnimalSerializer(serializers.ModelSerializer):
         if self.context.method != 'POST':  
             return value
         if value not in ALLOWED_SPECIES:
-            raise ValidationError(f"Adding pet of species '{value}' is not allowed")
+            raise ValidationError(f"Adding pet of species '{value}' is not currently allowed")
         return value

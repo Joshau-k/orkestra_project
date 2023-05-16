@@ -188,7 +188,44 @@ class AnimalApiTests(TestCase):
 
         self.assertEqual(
             json.loads(response1.data),
-            {"species": ["Adding pet of species 'Bunny' is not allowed"]}
+            {"species": ["Adding pet of species 'Bunny' is not currently allowed"]}
+        )
+
+        self.assertCountEqual(
+            list(Animal.objects.all()),
+            [],
+            msg="Expected no animal to be created"
+
+        )
+
+    def test_post_unknown_species_fails(self):
+        """
+            Ensure post fails when created species that is not known at all
+        """
+
+        self.assertEqual(
+            list(Animal.objects.all()),
+            [],
+            msg="Test pre-condition. Ensure animal table is empty."
+        )
+
+        client = APIClient()
+
+        #First post
+        response1 = client.post(
+            'http://localhost/pet/', 
+            data={'species': 'Crokadile', 'name': 'Wiggles', 'age': 1}
+        )
+
+        self.assertEqual(
+            response1.status_code,
+            400,
+            msg="Expected first post response code to be 400 - bad request"
+        )
+
+        self.assertEqual(
+            json.loads(response1.data),
+            {'species': ['"Crokadile" is not a valid choice.']}
         )
 
         self.assertCountEqual(
