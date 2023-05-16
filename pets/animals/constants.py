@@ -3,9 +3,9 @@ from enum import Enum
 from typing import List, Tuple
 
 class Species(Enum):
-    Cat = 'Cat'
-    Dog = 'Dog'
-    Bunny = 'Bunny'
+    Cat = 'cat'
+    Dog = 'dog'
+    Bunny = 'bunny'
 
     @classmethod
     def as_list(cls) -> List[str]:

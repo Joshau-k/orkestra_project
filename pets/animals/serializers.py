@@ -9,7 +9,7 @@ class AnimalSerializer(serializers.ModelSerializer):
         model = Animal
         fields = ['species', 'name', 'age']
 
-    def validate_species(self, value):
+    def validate_species(self, value:str):
         if self.context.method != 'POST':  
             return value
         if value not in ALLOWED_SPECIES:

@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='Animal',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('species', models.CharField(choices=[('Cat', 'Cat'), ('Dog', 'Dog')], max_length=100)),
+                ('species', models.CharField(choices=[('cat', 'Cat'), ('dog', 'Dog')], max_length=100)),
                 ('name', models.CharField(max_length=100)),
                 ('age', models.IntegerField()),
             ],

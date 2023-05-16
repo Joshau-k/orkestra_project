@@ -28,7 +28,12 @@ class AnimalView(APIView):
         return Response(serializer.data)
 
     def post(self, request:Request, format=None):
-        serializer = AnimalSerializer(data=request.data, many=False, context=request)
+        data = request.data
+        if 'species' in request.data:
+            data = request.data.copy()
+            data['species'] = data['species'].lower()
+        serializer = AnimalSerializer(data=data, many=False, context=request)
+        
         if not serializer.is_valid():
             return Response(json.dumps(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
         serializer.save()

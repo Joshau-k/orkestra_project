@@ -32,9 +32,9 @@ class AnimalApiTests(TestCase):
             #Note: this ensures the elements in the list are the same, but in any order
             response.data,
             [
-                {'species': 'Dog', 'name': 'Boris', 'age': 12},
-                {'species': 'Dog', 'name': 'Ralf', 'age': 2},
-                {'species': 'Cat', 'name': 'Mittens', 'age': 5},
+                {'species': 'dog', 'name': 'Boris', 'age': 12},
+                {'species': 'dog', 'name': 'Ralf', 'age': 2},
+                {'species': 'cat', 'name': 'Mittens', 'age': 5},
             ],
             msg="Expected response data to contain the 3 animals from the Animal table"
         )
@@ -65,7 +65,7 @@ class AnimalApiTests(TestCase):
             #Note: this ensures the elements in the list are the same, but in any order
             response.data,
             [
-                {'species': 'Cat', 'name': 'Mittens', 'age': 2},
+                {'species': 'cat', 'name': 'Mittens', 'age': 2},
             ],
             msg="Expected response data to contain only the cat from the Animal table"
         )
@@ -82,8 +82,8 @@ class AnimalApiTests(TestCase):
             #Note: this ensures the elements in the list are the same, but in any order
             response.data,
             [
-                {'species': 'Cat', 'name': 'Mittens', 'age': 2},
-                {'species': 'Dog', 'name': 'Ralf', 'age': 2},
+                {'species': 'cat', 'name': 'Mittens', 'age': 2},
+                {'species': 'dog', 'name': 'Ralf', 'age': 2},
             ],
             msg="Expected response data to contain only the pets of age 2 from the Animal table"
         )
@@ -100,7 +100,7 @@ class AnimalApiTests(TestCase):
             #Note: this ensures the elements in the list are the same, but in any order
             response.data,
             [
-                {'species': 'Dog', 'name': 'Boris', 'age': 12},
+                {'species': 'dog', 'name': 'Boris', 'age': 12},
             ],
             msg="Expected response data to contain only the pet named Boris from the Animal table"
         )
@@ -122,7 +122,7 @@ class AnimalApiTests(TestCase):
         #First post
         response1 = client.post(
             'http://localhost/pet/', 
-            data={'species': 'Cat', 'name': 'Spot', 'age': 2}
+            data={'species': 'cat', 'name': 'Spot', 'age': 2}
         )
 
         self.assertEqual(
@@ -133,7 +133,7 @@ class AnimalApiTests(TestCase):
 
         self.assertCountEqual(
             list(Animal.objects.all().values('species', 'name', 'age')),
-            [{"species":"Cat", "name":"Spot", "age":2}],
+            [{"species":"cat", "name":"Spot", "age":2}],
             msg="Expected post request to add new entry to the Animal table"
 
         )
@@ -141,7 +141,7 @@ class AnimalApiTests(TestCase):
         #Second post
         response2 = client.post(
             'http://localhost/pet/', 
-            data={'species': 'Dog', 'name': 'Bird', 'age': 3}
+            data={'species': 'dog', 'name': 'Bird', 'age': 3}
         )
 
         self.assertEqual(
@@ -154,8 +154,8 @@ class AnimalApiTests(TestCase):
         self.assertCountEqual(
             list(Animal.objects.all().values('species', 'name', 'age')),
             [
-                {"species":"Cat", "name":"Spot", "age":2},
-                {"species":"Dog", "name":"Bird", "age":3},
+                {"species":"cat", "name":"Spot", "age":2},
+                {"species":"dog", "name":"Bird", "age":3},
              ],
             msg="Expected post request to add a second entry to the Animal table"
         )
@@ -177,7 +177,7 @@ class AnimalApiTests(TestCase):
         #First post
         response1 = client.post(
             'http://localhost/pet/', 
-            data={'species': 'Bunny', 'name': 'Wiggles', 'age': 1}
+            data={'species': 'bunny', 'name': 'Wiggles', 'age': 1}
         )
 
         self.assertEqual(
@@ -188,7 +188,7 @@ class AnimalApiTests(TestCase):
 
         self.assertEqual(
             json.loads(response1.data),
-            {"species": ["Adding pet of species 'Bunny' is not currently allowed"]}
+            {"species": ["Adding pet of species 'bunny' is not currently allowed"]}
         )
 
         self.assertCountEqual(
@@ -214,7 +214,7 @@ class AnimalApiTests(TestCase):
         #First post
         response1 = client.post(
             'http://localhost/pet/', 
-            data={'species': 'Crokadile', 'name': 'Wiggles', 'age': 1}
+            data={'species': 'crokadile', 'name': 'Wiggles', 'age': 1}
         )
 
         self.assertEqual(
@@ -225,7 +225,7 @@ class AnimalApiTests(TestCase):
 
         self.assertEqual(
             json.loads(response1.data),
-            {'species': ['"Crokadile" is not a valid choice.']}
+            {'species': ['"crokadile" is not a valid choice.']}
         )
 
         self.assertCountEqual(
@@ -240,7 +240,7 @@ class AnimalApiTests(TestCase):
             Ensure get succeeds when a non-allowed species already exists in database
         """
 
-        Animal.objects.create(species='Bunny', name='Froggle', age=3)
+        Animal.objects.create(species='bunny', name='Froggle', age=3)
 
 
         client = APIClient()
@@ -256,7 +256,40 @@ class AnimalApiTests(TestCase):
             #Note: this ensures the elements in the list are the same, but in any order
             response.data,
             [
-                {'species': 'Bunny', 'name': 'Froggle', 'age': 3},
+                {'species': 'bunny', 'name': 'Froggle', 'age': 3},
             ],
             msg="Expected response data to contain the bunny from the Animal table"
         )
+
+    def test_post_species_wrong_case(self):
+        """
+            Ensure post request can create a pet, even if the species has the wrong case
+        """
+
+        self.assertEqual(
+            list(Animal.objects.all()),
+            [],
+            msg="Test pre-condition. Ensure animal table is empty."
+        )
+
+        client = APIClient()
+
+        #First post
+        response1 = client.post(
+            'http://localhost/pet/', 
+            data={'species': 'CaT', 'name': 'Spot', 'age': 2}
+        )
+
+        self.assertEqual(
+            response1.status_code,
+            201,
+            msg="Expected first post response code to be 201 - created"
+        )
+
+        self.assertCountEqual(
+            list(Animal.objects.all().values('species', 'name', 'age')),
+            [{"species":"cat", "name":"Spot", "age":2}],
+            msg="Expected post request to add new entry to the Animal table"
+
+        )
+

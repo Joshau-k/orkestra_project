@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='animal',
             name='species',
-            field=models.CharField(choices=[('Cat', 'Cat'), ('Dog', 'Dog'), ('Bunny', 'Bunny')], max_length=100),
+            field=models.CharField(choices=[('cat', 'Cat'), ('dog', 'Dog'), ('bunny', 'Bunny')], max_length=100),
         ),
     ]
