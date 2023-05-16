@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase
 from animals.models import Animal
 from rest_framework.test import APIClient
@@ -157,4 +158,68 @@ class AnimalApiTests(TestCase):
                 {"species":"Dog", "name":"Bird", "age":3},
              ],
             msg="Expected post request to add a second entry to the Animal table"
+        )
+
+
+    def test_post_non_allowed_species_fails(self):
+        """
+            Ensure post fails when created species that is disabled
+        """
+
+        self.assertEqual(
+            list(Animal.objects.all()),
+            [],
+            msg="Test pre-condition. Ensure animal table is empty."
+        )
+
+        client = APIClient()
+
+        #First post
+        response1 = client.post(
+            'http://localhost/pet/', 
+            data={'species': 'Bunny', 'name': 'Wiggles', 'age': 1}
+        )
+
+        self.assertEqual(
+            response1.status_code,
+            400,
+            msg="Expected first post response code to be 400 - bad request"
+        )
+
+        self.assertEqual(
+            json.loads(response1.data),
+            {"species": ["Adding pet of species 'Bunny' is not allowed"]}
+        )
+
+        self.assertCountEqual(
+            list(Animal.objects.all()),
+            [],
+            msg="Expected no animal to be created"
+
+        )
+
+    def test_get_non_allowed_species_succeeds(self):
+        """
+            Ensure get succeeds when a non-allowed species already exists in database
+        """
+
+        Animal.objects.create(species='Bunny', name='Froggle', age=3)
+
+
+        client = APIClient()
+        response = client.get('http://localhost/pet/')
+
+        self.assertEqual(
+            response.status_code,
+            200,
+            msg="Expected response code to be 200 - OK"
+        )
+
+        self.assertCountEqual(
+            #Note: this ensures the elements in the list are the same, but in any order
+            response.data,
+            [
+                {'species': 'Bunny', 'name': 'Froggle', 'age': 3},
+            ],
+            msg="Expected response data to contain the bunny from the Animal table"
         )

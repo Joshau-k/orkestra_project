@@ -5,6 +5,7 @@ from typing import List, Tuple
 class Species(Enum):
     Cat = 'Cat'
     Dog = 'Dog'
+    Bunny = 'Bunny'
 
     @classmethod
     def as_list(cls) -> List[str]:
@@ -14,4 +15,4 @@ class Species(Enum):
     def as_tuples(cls) -> List[Tuple[str, str]]:
         return [(e.value, e.name) for e in Species]
 
-ALLOWED_SPECIES = [Species.Cat, Species.Dog]
+ALLOWED_SPECIES = [Species.Cat.value, Species.Dog.value]

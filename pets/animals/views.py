@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 from django.db.models.query_utils import Q
+import json
 
 from animals.models import Animal
 from animals.serializers import AnimalSerializer
@@ -23,12 +24,12 @@ class AnimalView(APIView):
             query &= Q(age__iexact=age)
 
         animals = Animal.objects.filter(query)
-        serializer = AnimalSerializer(animals, many=True)
+        serializer = AnimalSerializer(animals, many=True, context=request)
         return Response(serializer.data)
 
     def post(self, request:Request, format=None):
-        serializer = AnimalSerializer(data=request.data, many=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return
+        serializer = AnimalSerializer(data=request.data, many=False, context=request)
+        if not serializer.is_valid():
+            return Response(json.dumps(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
