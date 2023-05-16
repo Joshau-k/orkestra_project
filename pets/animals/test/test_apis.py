@@ -4,6 +4,10 @@ from rest_framework.test import APIClient
 
 class AnimalApiTests(TestCase):
 
+    def setUp(self) -> None:
+        Animal.objects.all().delete()
+        return super().setUp()
+
     def test_get(self):
         Animal.objects.create(species='Dog', name='Ralf', age=2)
         Animal.objects.create(species='Cat', name='Mittens', age=5)
