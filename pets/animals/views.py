@@ -10,10 +10,10 @@ from animals.serializers import AnimalSerializer
 
 
 class AnimalView(APIView):
-    def get(self, request:Request, format=None):
-        species = request.GET.get('species')
-        name = request.GET.get('name')
-        age = request.GET.get('age')
+    def get(self, request: Request, format=None):
+        species = request.GET.get("species")
+        name = request.GET.get("name")
+        age = request.GET.get("age")
 
         query = Q()
         if species:
@@ -27,14 +27,16 @@ class AnimalView(APIView):
         serializer = AnimalSerializer(animals, many=True, context=request)
         return Response(serializer.data)
 
-    def post(self, request:Request, format=None):
+    def post(self, request: Request, format=None):
         data = request.data
-        if 'species' in request.data:
+        if "species" in request.data:
             data = request.data.copy()
-            data['species'] = data['species'].lower()
+            data["species"] = data["species"].lower()
         serializer = AnimalSerializer(data=data, many=False, context=request)
-        
+
         if not serializer.is_valid():
-            return Response(json.dumps(serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                json.dumps(serializer.errors), status=status.HTTP_400_BAD_REQUEST
+            )
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

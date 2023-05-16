@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('animals', '0002_auto_20230516_1143'),
+        ("animals", "0002_auto_20230516_1143"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='animal',
-            name='species',
-            field=models.CharField(choices=[('cat', 'Cat'), ('dog', 'Dog'), ('bunny', 'Bunny')], max_length=100),
+            model_name="animal",
+            name="species",
+            field=models.CharField(
+                choices=[("cat", "Cat"), ("dog", "Dog"), ("bunny", "Bunny")],
+                max_length=100,
+            ),
         ),
     ]

@@ -4,14 +4,17 @@ from rest_framework import serializers
 from animals.models import Animal
 from animals.constants import ALLOWED_SPECIES
 
+
 class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
-        fields = ['species', 'name', 'age']
+        fields = ["species", "name", "age"]
 
-    def validate_species(self, value:str):
-        if self.context.method != 'POST':  
+    def validate_species(self, value: str):
+        if self.context.method != "POST":
             return value
         if value not in ALLOWED_SPECIES:
-            raise ValidationError(f"Adding pet of species '{value}' is not currently allowed")
+            raise ValidationError(
+                f"Adding pet of species '{value}' is not currently allowed"
+            )
         return value
