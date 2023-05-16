@@ -16,3 +16,4 @@
     - The requirement/note in the instructions that "allowed species will be added and removed regularly", really needed more scoping out, so I just went with the simplest solution.
        - I asummed any changes to allowed species would be in code and would only affect adding pets, not viewing pets, nor affect existing pets in the database.
        - Also I assumed the list of all species would never be removed from
+    - Post adding multiple pets at once would make a lot of sense, but it didn't seem to be required. It would not be a difficult change
